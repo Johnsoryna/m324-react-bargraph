@@ -250,7 +250,7 @@ bullets([
     ["Auch der Konsument braucht eine ", (".npmrc", "code"), " mit Scope-Mapping und einem Token mit ",
      ("read:packages", "code"), ", sogar bei öffentlichen Packages. Das ist der grösste Unterschied zu npmjs.com."],
 ])
-p("Konfiguration für GitHub Packages (nicht umgesetzt, nur recherchiert):")
+p("Konfiguration für GitHub Packages (für das eigene Package nicht umgesetzt; der Lese-Teil kam beim Package des Lernpartners zum Einsatz, siehe unten):")
 code("""
 # .npmrc (Package-Projekt und Konsument)
 @johnsoryna:registry=https://npm.pkg.github.com
@@ -293,7 +293,7 @@ code("""
 mybargraph/
     package.json               Name, Version, files, exports, peerDependencies
     vite.config.js             Library-Modus (Build nach dist/)
-    vite.demo.config.js        nur fuer die lokale Demo
+    vite.demo.config.js        nur für die lokale Demo
     src/index.js               Einstiegspunkt, exportiert die Komponente
     src/components/HorizontalBarGraph.jsx
     src/components/HorizontalBarGraph.css
@@ -368,7 +368,7 @@ export { default } from './components/HorizontalBarGraph.jsx'
 export { default as HorizontalBarGraph } from './components/HorizontalBarGraph.jsx'
 """)
 code("""
-// src/components/HorizontalBarGraph.jsx (gekuerzt)
+// src/components/HorizontalBarGraph.jsx (gekürzt)
 import PropTypes from 'prop-types'
 import './HorizontalBarGraph.css'
 
@@ -439,7 +439,7 @@ export default defineConfig({ root: 'demo', plugins: [react()] })
 // package.json
 "demo": "vite --config vite.demo.config.js"
 """)
-screenshot("demo_browser", "npm run demo: Demo-Seite mit Slider und drei Balken im Browser")
+screenshot("demo_browser", "npm run demo: Demo-Seite mit Slider und drei Balken im Browser", width_cm=11)
 
 # =====================================================================
 h1("Aufgabe: Package publizieren (npmjs.com)")
@@ -463,7 +463,7 @@ p("Der erste Versuch scheiterte mit 403: npmjs.com verlangt seit 2025 für jedes
   "eingeschränkt. Nach dem Aktivieren von 2FA mit einem Passkey öffnet npm publish einen Browser-Link, dort "
   "bestätigt man mit dem Passkey, und das Terminal fährt fort. Wichtig: Das funktioniert nur in einem "
   "interaktiven Terminal, nicht in einem Skript.")
-code("""
+code(r"""
 PS C:\Code\324\mybargraph> npm login
 Logged in on https://registry.npmjs.org/.
 
@@ -494,7 +494,7 @@ npm install
 npm install @johnsoryna/mybargraph
 """)
 code("""
-// src/App.jsx (gekuerzt)
+// src/App.jsx (gekürzt)
 import { useState } from 'react'
 import HorizontalBarGraph from '@johnsoryna/mybargraph'
 
@@ -512,8 +512,8 @@ function App() {
 """)
 p("In der package.json des Konsumenten steht danach \"@johnsoryna/mybargraph\": \"^1.0.0\". Das CSS muss "
   "nicht separat importiert werden, weil es im Bundle injiziert ist.")
-screenshot("explorer_node_modules", "node_modules/@johnsoryna/mybargraph im Konsumenten-Projekt: nur dist/, README und package.json")
-screenshot("consumer_browser", "npm run dev im Konsumenten: HorizontalBarGraph aus dem npm-Package")
+screenshot("explorer_node_modules", "node_modules/@johnsoryna/mybargraph im Konsumenten-Projekt: nur dist/, README und package.json", width_cm=14)
+screenshot("consumer_browser", "npm run dev im Konsumenten: HorizontalBarGraph aus dem npm-Package", width_cm=14)
 
 # =====================================================================
 h1("Aufgabe: Package vom Lernpartner einbinden")
@@ -529,7 +529,7 @@ code("""
 @samusn:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
 
-# PowerShell: Token aus der GitHub-CLI uebernehmen, dann installieren
+# PowerShell: Token aus der GitHub-CLI übernehmen, dann installieren
 $env:GITHUB_TOKEN = gh auth token
 npm install @samusn/react-card-package@1.0.0
 """)
@@ -550,7 +550,7 @@ p("Das Package exportiert die Komponente Card (Named Export) mit den Props title
   "Ich verwende sie in src/PartnerDemo.jsx zweimal, in der zweiten Card steckt zusätzlich ein Balken aus meinem "
   "eigenen Package, damit beide Packages zusammen sichtbar sind:")
 code("""
-// src/PartnerDemo.jsx (gekuerzt)
+// src/PartnerDemo.jsx (gekürzt)
 import { Card } from '@samusn/react-card-package'
 import HorizontalBarGraph from '@johnsoryna/mybargraph'
 
@@ -573,7 +573,7 @@ p("Die richtige Korrektur gehört ins Package des Partners (external ergänzen, 
   "Datei ein lokales require gibt, das \"react\" liefert. Weil vorgebündelte Abhängigkeiten an Plugins "
   "vorbeigehen, muss das Package zusätzlich aus optimizeDeps ausgeschlossen werden.")
 code(r"""
-// vite.config.js des Konsumenten (gekuerzt)
+// vite.config.js des Konsumenten (gekürzt)
 function fixPartnerRequire() {
   const target = /@samusn[\\/]react-card-package[\\/]dist[\\/]react-card-package\.es\.js$/
   return {

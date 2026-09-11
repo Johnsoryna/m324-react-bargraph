@@ -575,7 +575,7 @@ p("Die richtige Korrektur gehört ins Package des Partners (external ergänzen, 
 code(r"""
 // vite.config.js des Konsumenten (gekuerzt)
 function fixPartnerRequire() {
-  const target = /@samusn[\/]react-card-package[\/]dist[\/]react-card-package\.es\.js$/
+  const target = /@samusn[\\/]react-card-package[\\/]dist[\\/]react-card-package\.es\.js$/
   return {
     name: 'fix-partner-require', enforce: 'pre',
     transform(code, id) {

@@ -300,7 +300,7 @@ mybargraph/
     demo/index.html, demo/src/main.jsx   Demo-App (nicht im Package)
     dist/                      Build-Ergebnis (in .gitignore, aber im Package)
 """)
-screenshot("intellij_projekt", "Projektstruktur des Packages in IntelliJ")
+screenshot("projekt_explorer", "Projektstruktur des Packages: src, demo, dist, doku und die beiden Vite-Konfigurationen")
 
 h2("Schritt 2: vite.config.js auf Library-Modus umstellen")
 code("""
@@ -477,8 +477,8 @@ Press ENTER to open in the browser...
 
 + @johnsoryna/mybargraph@1.0.0
 """)
-screenshot("term_publish", "npm publish --access public im Terminal")
-screenshot("npmjs_package", "Das Package @johnsoryna/mybargraph auf npmjs.com")
+screenshot("npmjs_package", "Das Package @johnsoryna/mybargraph auf npmjs.com, Version 1.0.0, public, mit Link zum Repository")
+screenshot("github_repo", "Quellcode-Repository m324-react-bargraph auf GitHub")
 p("Eine publizierte Version ist unveränderlich. Für jede weitere Publikation muss die Version erhöht werden, "
   "z.B. mit npm version patch (1.0.0 -> 1.0.1), erst dann geht npm publish wieder durch.")
 
@@ -553,18 +553,13 @@ bullets([
 
 # =====================================================================
 doc.add_page_break()
-h1("Anhang: Checkliste Screenshots (vor der PDF-Abgabe entfernen)")
-p("Dateien nach doku/screenshots/ legen und python build_doku.py erneut ausführen, dann werden sie automatisch eingebettet.")
+h1("Anhang: Offene Punkte (vor der PDF-Abgabe entfernen)")
+p("Sobald das Package des Lernpartners bekannt ist: installieren, in src/PartnerDemo.jsx einbinden, die gelben "
+  "Platzhalter im Abschnitt Lernpartner ersetzen, diese zwei Screenshots nach doku/screenshots/ legen und "
+  "python build_doku.py erneut ausführen.")
 table(
     ["Datei", "Inhalt", "Wo"],
     [
-        ["intellij_projekt.png", "IntelliJ mit Projektbaum von mybargraph (src, demo, dist, package.json)", "Package erstellen, Schritt 1"],
-        ["term_build.png", "Terminal: npm run build und npm pack --dry-run", "Package erstellen, Schritt 6/7"],
-        ["demo_browser.png", "Browser: npm run demo mit Slider und Balken", "Demo"],
-        ["term_publish.png", "Terminal: npm whoami und npm publish --access public", "Publizieren"],
-        ["npmjs_package.png", "Browser: npmjs.com/package/@johnsoryna/mybargraph", "Publizieren"],
-        ["explorer_node_modules.png", "Explorer/IntelliJ: node_modules/@johnsoryna/mybargraph/dist im Konsumenten", "Verwenden"],
-        ["consumer_browser.png", "Browser: bargraph-consumer mit npm run dev", "Verwenden"],
         ["partner_browser.png", "Browser: Konsument mit Partner-Komponente", "Lernpartner"],
         ["partner_package_json.png", "package.json des Konsumenten mit beiden Packages", "Lernpartner"],
     ],

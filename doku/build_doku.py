@@ -533,21 +533,65 @@ code("""
 $env:GITHUB_TOKEN = gh auth token
 npm install @samusn/react-card-package@1.0.0
 """)
-p("Erster Versuch: Die Registry antwortet mit 403 \"permission_denied: read_package\". Das Package und das "
-  "Repository sind privat, mein GitHub-Konto hat keinen Lesezugriff. Bei GitHub Packages folgt die Sichtbarkeit "
-  "eines npm-Packages dem verknüpften Repository. Der Partner muss das Package auf public stellen oder mich als "
-  "Collaborator im Repository eintragen. Auf npmjs.com wäre dieser Schritt nicht nötig gewesen.")
-par = p("[Nach Freigabe ergänzen: Ausgabe von npm install, Komponente und Props aus dem README des Partners, Screenshot]", bold=True)
-for run in par.runs:
-    run.font.highlight_color = WD_COLOR_INDEX.YELLOW
-code("""
-// src/PartnerDemo.jsx (vorbereitet)
-import Card from '@samusn/react-card-package'
-...
-<Card title="Beispiel" />
+p("Erster Versuch: Die Registry antwortet mit 403 \"permission_denied: read_package\". Das Repository war "
+  "privat. Nachdem der Partner das Repository auf public gestellt hatte, kam immer noch 403: Bei GitHub "
+  "Packages hat das Package eine eigene Sichtbarkeit (Package settings, Danger Zone, Change visibility), "
+  "die nicht automatisch mit dem Repository wechselt. Erst nach diesem zweiten Schritt liess sich das "
+  "Package installieren. Auf npmjs.com wäre beides nicht nötig gewesen.")
+code(r"""
+PS C:\Code\324\bargraph-consumer> npm install @samusn/react-card-package@1.0.0
+found 0 vulnerabilities
+
+package.json:      "@samusn/react-card-package": "^1.0.0"
+package-lock.json: "resolved": "https://npm.pkg.github.com/download/@samusn/react-card-package/1.0.0/..."
+node_modules/@samusn/react-card-package/dist/react-card-package.es.js
 """)
-screenshot("partner_browser", "Konsument mit eigenem Package und dem Package des Lernpartners")
-screenshot("partner_package_json", "package.json des Konsumenten mit beiden Abhängigkeiten")
+p("Das Package exportiert die Komponente Card (Named Export) mit den Props title, image, style und children. "
+  "Ich verwende sie in src/PartnerDemo.jsx zweimal, in der zweiten Card steckt zusätzlich ein Balken aus meinem "
+  "eigenen Package, damit beide Packages zusammen sichtbar sind:")
+code("""
+// src/PartnerDemo.jsx (gekuerzt)
+import { Card } from '@samusn/react-card-package'
+import HorizontalBarGraph from '@johnsoryna/mybargraph'
+
+<Card title="Card aus dem Partner-Package">
+  <p>Diese Karte kommt aus @samusn/react-card-package.</p>
+</Card>
+<Card title="Beide Packages kombiniert">
+  <HorizontalBarGraph value={75} maxvalue={100} barwidthpx={280} label="Fortschritt" color="#7c3aed" />
+</Card>
+""")
+h2("Problem: require ist nicht definiert")
+p("Nach dem Import blieb die Seite leer. In der Browser-Konsole: \"Calling `require` for \"react\" in an "
+  "environment that doesn't expose the `require` function\". Ursache: In der vite.config.js des Partners steht "
+  "unter rollupOptions.external nur react und react-dom, nicht react/jsx-runtime. Vite hat deshalb den "
+  "JSX-Runtime von React mit ins Bundle kopiert, und dieser Code holt sich React per require(\"react\"). Im "
+  "Browser gibt es kein require. Mein eigenes Package hat react/jsx-runtime als external, darum tritt das "
+  "Problem dort nicht auf.")
+p("Die richtige Korrektur gehört ins Package des Partners (external ergänzen, Version 1.0.1 publizieren). "
+  "Damit der Konsument trotzdem läuft, habe ich ein kleines Vite-Plugin geschrieben, das nur dieser einen "
+  "Datei ein lokales require gibt, das \"react\" liefert. Weil vorgebündelte Abhängigkeiten an Plugins "
+  "vorbeigehen, muss das Package zusätzlich aus optimizeDeps ausgeschlossen werden.")
+code("""
+// vite.config.js des Konsumenten (gekuerzt)
+function fixPartnerRequire() {
+  const target = /@samusn[\\/]react-card-package[\\/]dist[\\/]react-card-package\.es\.js$/
+  return {
+    name: 'fix-partner-require', enforce: 'pre',
+    transform(code, id) {
+      if (!target.test(id.split('?')[0])) return
+      return { code: "import * as __react from 'react';\n" +
+        "const require = (m) => { if (m === 'react') return __react.default ?? __react; throw new Error(m) };\n" + code }
+    },
+  }
+}
+export default defineConfig({
+  plugins: [fixPartnerRequire(), react()],
+  optimizeDeps: { exclude: ['@samusn/react-card-package'] },
+})
+""")
+screenshot("partner_browser", "Konsument: zwei Cards aus @samusn/react-card-package, in der zweiten ein HorizontalBarGraph aus @johnsoryna/mybargraph")
+screenshot("partner_package_json", "package.json des Konsumenten auf GitHub mit beiden Packages als dependencies")
 
 # =====================================================================
 h1("Fazit und Probleme")
@@ -560,24 +604,14 @@ bullets([
     "aber es wird nicht ins Bundle kopiert.",
     "Der Unterschied zu Maven: Bei npm ist der Konsument-Registry-Zugriff ohne Konfiguration möglich, bei GitHub "
     "Packages braucht auch npm (wie Maven) ein Token zum Lesen.",
+    "Ein Package muss alle React-Einstiegspunkte als external markieren, auch react/jsx-runtime. Fehlt das, "
+    "landet ein require(\"react\") im Bundle und das Package funktioniert im Browser nicht. Der Konsument kann "
+    "das nur mit einem Workaround umgehen, die eigentliche Korrektur gehört ins Package.",
+    "Bei GitHub Packages sind Repository- und Package-Sichtbarkeit zwei getrennte Einstellungen.",
     "npmjs.com erzwingt 2FA beim Publizieren. Der Access-Token-Weg mit \"Bypass 2FA\" aus der Anleitung wird "
     "eingeschränkt, für Pipelines ist Trusted Publishing (OIDC) der vorgesehene Ersatz.",
 ])
 
 # =====================================================================
-doc.add_page_break()
-h1("Anhang: Offene Punkte (vor der PDF-Abgabe entfernen)")
-p("Sobald das Package des Lernpartners bekannt ist: installieren, in src/PartnerDemo.jsx einbinden, die gelben "
-  "Platzhalter im Abschnitt Lernpartner ersetzen, diese zwei Screenshots nach doku/screenshots/ legen und "
-  "python build_doku.py erneut ausführen.")
-table(
-    ["Datei", "Inhalt", "Wo"],
-    [
-        ["partner_browser.png", "Browser: Konsument mit Partner-Komponente", "Lernpartner"],
-        ["partner_package_json.png", "package.json des Konsumenten mit beiden Packages", "Lernpartner"],
-    ],
-    widths=[4.5, 7.5, 4.0],
-)
-
 doc.save(OUT)
 print(f"geschrieben: {OUT}")

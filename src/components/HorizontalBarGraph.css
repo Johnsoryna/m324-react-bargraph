@@ -10,12 +10,12 @@
   gap: 8px;
   font-size: 14px;
   margin-bottom: 4px;
-  color: #1f2937;
+  color: inherit;
 }
 
 .hbg__value {
   font-variant-numeric: tabular-nums;
-  color: #6b7280;
+  opacity: 0.7;
 }
 
 .hbg__track {

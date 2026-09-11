@@ -572,10 +572,10 @@ p("Die richtige Korrektur gehört ins Package des Partners (external ergänzen, 
   "Damit der Konsument trotzdem läuft, habe ich ein kleines Vite-Plugin geschrieben, das nur dieser einen "
   "Datei ein lokales require gibt, das \"react\" liefert. Weil vorgebündelte Abhängigkeiten an Plugins "
   "vorbeigehen, muss das Package zusätzlich aus optimizeDeps ausgeschlossen werden.")
-code("""
+code(r"""
 // vite.config.js des Konsumenten (gekuerzt)
 function fixPartnerRequire() {
-  const target = /@samusn[\\/]react-card-package[\\/]dist[\\/]react-card-package\.es\.js$/
+  const target = /@samusn[\/]react-card-package[\/]dist[\/]react-card-package\.es\.js$/
   return {
     name: 'fix-partner-require', enforce: 'pre',
     transform(code, id) {

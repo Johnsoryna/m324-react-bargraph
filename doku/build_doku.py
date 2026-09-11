@@ -458,10 +458,24 @@ table(
 p("Ich habe npm login gewählt. Die Datei .npmrc steht trotzdem in .gitignore, falls später ein Token für eine "
   "Pipeline dazukommt. Publiziert wird mit --access public, weil Packages mit Scope standardmässig privat wären "
   "und private Packages auf npmjs.com kostenpflichtig sind.")
+p("Der erste Versuch scheiterte mit 403: npmjs.com verlangt seit 2025 für jedes Publizieren eine "
+  "Zwei-Faktor-Authentifizierung, Tokens mit \"Bypass 2FA\" (wie in der Modul-Anleitung beschrieben) werden "
+  "eingeschränkt. Nach dem Aktivieren von 2FA mit einem Passkey öffnet npm publish einen Browser-Link, dort "
+  "bestätigt man mit dem Passkey, und das Terminal fährt fort. Wichtig: Das funktioniert nur in einem "
+  "interaktiven Terminal, nicht in einem Skript.")
 code("""
-npm login
-npm whoami                     # johnsoryna
-npm publish --access public
+PS C:\Code\324\mybargraph> npm login
+Logged in on https://registry.npmjs.org/.
+
+PS C:\Code\324\mybargraph> npm publish --access public
+npm notice package: @johnsoryna/mybargraph@1.0.0
+npm notice total files: 5
+npm notice Publishing to https://registry.npmjs.org/ with tag latest and public access
+Authenticate your account at:
+https://www.npmjs.com/auth/cli/984ba77b-....
+Press ENTER to open in the browser...
+
++ @johnsoryna/mybargraph@1.0.0
 """)
 screenshot("term_publish", "npm publish --access public im Terminal")
 screenshot("npmjs_package", "Das Package @johnsoryna/mybargraph auf npmjs.com")
@@ -533,6 +547,8 @@ bullets([
     "aber es wird nicht ins Bundle kopiert.",
     "Der Unterschied zu Maven: Bei npm ist der Konsument-Registry-Zugriff ohne Konfiguration möglich, bei GitHub "
     "Packages braucht auch npm (wie Maven) ein Token zum Lesen.",
+    "npmjs.com erzwingt 2FA beim Publizieren. Der Access-Token-Weg mit \"Bypass 2FA\" aus der Anleitung wird "
+    "eingeschränkt, für Pipelines ist Trusted Publishing (OIDC) der vorgesehene Ersatz.",
 ])
 
 # =====================================================================

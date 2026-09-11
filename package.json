@@ -1,0 +1,58 @@
+{
+  "name": "@johnsoryna/mybargraph",
+  "version": "1.0.0",
+  "description": "HorizontalBarGraph - eine einfache, animierte React-Balkenkomponente (Modul 324 DevOps)",
+  "private": false,
+  "type": "module",
+  "license": "MIT",
+  "author": "Johnny Leonhardt",
+  "keywords": [
+    "react",
+    "component",
+    "bargraph",
+    "bar-graph",
+    "progress",
+    "m324"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Johnsoryna/m324-react-bargraph.git"
+  },
+  "homepage": "https://github.com/Johnsoryna/m324-react-bargraph#readme",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/mybargraph.cjs.js",
+  "module": "./dist/mybargraph.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/mybargraph.es.js",
+      "require": "./dist/mybargraph.cjs.js"
+    }
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "demo": "vite --config vite.demo.config.js",
+    "lint": "oxlint"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "dependencies": {
+    "prop-types": "^15.8.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "oxlint": "^1.81.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "vite": "^8.3.0",
+    "vite-plugin-lib-inject-css": "^2.2.2"
+  }
+}

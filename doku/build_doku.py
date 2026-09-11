@@ -517,22 +517,35 @@ screenshot("consumer_browser", "npm run dev im Konsumenten: HorizontalBarGraph a
 
 # =====================================================================
 h1("Aufgabe: Package vom Lernpartner einbinden")
-par = p("Lernpartner: [NAME]   Package: [@PARTNER/PAKETNAME]   Registry: [npmjs.com / GitHub Packages]", bold=True)
+p("Lernpartner: GitHub-Benutzer Samusn. Package: @samusn/react-card-package, Version 1.0.0, publiziert auf "
+  "GitHub Packages (github.com/Samusn/react-card-package/pkgs/npm/react-card-package).")
+p("Damit ist genau der Fall aus der Recherche oben eingetreten: Das Package liegt nicht auf npmjs.com, sondern "
+  "in der GitHub-Registry. npm install würde es dort gar nicht suchen. Im Konsumenten braucht es deshalb eine "
+  ".npmrc, die den Scope @samusn auf npm.pkg.github.com umleitet und ein Token mitgibt. Das Token steht nur "
+  "in der Umgebungsvariable GITHUB_TOKEN, die .npmrc selbst kann ins Repository, wie die settings.xml bei Maven "
+  "mit ${env.GITHUB_TOKEN}.")
+code("""
+# bargraph-consumer/.npmrc
+@samusn:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+
+# PowerShell: Token aus der GitHub-CLI uebernehmen, dann installieren
+$env:GITHUB_TOKEN = gh auth token
+npm install @samusn/react-card-package@1.0.0
+""")
+p("Erster Versuch: Die Registry antwortet mit 403 \"permission_denied: read_package\". Das Package und das "
+  "Repository sind privat, mein GitHub-Konto hat keinen Lesezugriff. Bei GitHub Packages folgt die Sichtbarkeit "
+  "eines npm-Packages dem verknüpften Repository. Der Partner muss das Package auf public stellen oder mich als "
+  "Collaborator im Repository eintragen. Auf npmjs.com wäre dieser Schritt nicht nötig gewesen.")
+par = p("[Nach Freigabe ergänzen: Ausgabe von npm install, Komponente und Props aus dem README des Partners, Screenshot]", bold=True)
 for run in par.runs:
     run.font.highlight_color = WD_COLOR_INDEX.YELLOW
-p("Das Package des Lernpartners wird im gleichen Konsumenten-Projekt installiert und in src/PartnerDemo.jsx "
-  "verwendet. Die Datei enthält bereits die vorbereitete Stelle:")
 code("""
-npm install @PARTNER/PAKETNAME
-
-// src/PartnerDemo.jsx
-import PartnerKomponente from '@PARTNER/PAKETNAME'
+// src/PartnerDemo.jsx (vorbereitet)
+import Card from '@samusn/react-card-package'
 ...
-<PartnerKomponente prop1={...} prop2={...} />
+<Card title="Beispiel" />
 """)
-p("Falls der Lernpartner auf GitHub Packages publiziert hat, braucht es zusätzlich eine .npmrc im Konsumenten "
-  "mit dem Scope-Mapping (@partner:registry=https://npm.pkg.github.com) und einem eigenen GitHub-Token mit "
-  "read:packages, siehe Recherche oben.")
 screenshot("partner_browser", "Konsument mit eigenem Package und dem Package des Lernpartners")
 screenshot("partner_package_json", "package.json des Konsumenten mit beiden Abhängigkeiten")
 
